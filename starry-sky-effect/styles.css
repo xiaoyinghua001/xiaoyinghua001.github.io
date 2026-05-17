@@ -1,0 +1,405 @@
+:root {
+  color-scheme: light;
+  font-family:
+    Inter, "PingFang SC", "Microsoft YaHei", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ink: #1f2329;
+  --muted: #68707d;
+  --line: #dce2ea;
+  --panel: #ffffff;
+  --field: #ffffff;
+  --accent: #ff2442;
+  --accent-deep: #e00022;
+  --accent-soft: #fff1f4;
+  --search-line: #dfe3eb;
+  --shadow: 0 14px 34px rgba(36, 42, 52, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background: #ffffff;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+.search-shell {
+  width: min(100% - 40px, 940px);
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: clamp(144px, 27vh, 250px) 0 48px;
+  display: grid;
+  place-items: start center;
+}
+
+.search-card {
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  background: #ffffff;
+}
+
+.hero-group {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.brand-mark {
+  width: 72px;
+  height: auto;
+  display: block;
+}
+
+.intro {
+  margin: 22px 0 0;
+  text-align: left;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  max-width: none;
+  font-size: clamp(2.9rem, 4.8vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.subcopy {
+  margin: 28px 0 0;
+  padding-top: 0;
+  color: #b0b7c2;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.search-block {
+  position: relative;
+  width: min(100%, 660px);
+  margin: 24px auto 0;
+  border-radius: 29px;
+}
+
+.search-block.is-history-open {
+  box-shadow: none;
+}
+
+.search-form {
+  display: grid;
+  gap: 8px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.search-row {
+  height: 58px;
+  padding: 0 22px 0 25px;
+  border: 1px solid var(--search-line);
+  border-radius: 999px;
+  background: var(--field);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(60, 64, 67, 0.1);
+}
+
+.search-block:hover .search-row,
+.search-row:focus-within {
+  border-color: #cfd5df;
+  box-shadow:
+    0 1px 6px rgba(32, 33, 36, 0.18),
+    0 2px 12px rgba(32, 33, 36, 0.12);
+}
+
+.search-row input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  outline: none;
+  font-size: 1.15rem;
+}
+
+.search-row input::placeholder {
+  color: #b3b8c0;
+}
+
+.search-block.is-history-open .search-row {
+  position: relative;
+  z-index: 5;
+  border-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 29px 29px 0 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.search-block.is-history-open .search-row::after {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 0;
+  height: 1px;
+  background: #dfe3ea;
+}
+
+.search-row button {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  background: #f5f6f8;
+  display: grid;
+  place-items: center;
+  color: #5f6670;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.search-row button:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.search-icon {
+  width: 21px;
+  height: 21px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.form-hint {
+  min-height: 1.4em;
+  padding-left: 26px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.form-hint:empty {
+  display: none;
+}
+
+.form-hint.is-error {
+  color: var(--accent-deep);
+  font-weight: 750;
+}
+
+.quick-panel {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  display: none;
+  padding: 66px 0 12px;
+  border: 1px solid #cfd5df;
+  border-radius: 29px;
+  background: #ffffff;
+  box-shadow:
+    0 1px 6px rgba(32, 33, 36, 0.22),
+    0 14px 36px rgba(32, 33, 36, 0.18);
+  opacity: 1;
+  pointer-events: none;
+}
+
+.search-block.is-history-open .quick-panel {
+  display: block;
+  pointer-events: auto;
+}
+
+h2 {
+  color: #8c8c8c;
+  font-size: 1.08rem;
+  font-weight: 500;
+}
+
+.history-list {
+  min-height: 38px;
+}
+
+.history-row {
+  min-height: 40px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.history-row:hover {
+  background: #f3f4f6;
+}
+
+.history-query,
+.history-delete {
+  padding: 0;
+  background: transparent;
+}
+
+.history-query {
+  min-width: 0;
+  min-height: 40px;
+  padding-left: 28px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #4f5661;
+  font-size: 0.92rem;
+  font-weight: 450;
+  text-align: left;
+}
+
+.history-query span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-clock {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  display: block;
+  fill: none;
+  stroke: #9aa3af;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.history-delete {
+  min-height: 40px;
+  padding: 0 28px 0 12px;
+  color: #8b95a3;
+  font-size: 0.86rem;
+  font-weight: 500;
+  opacity: 0;
+  transition:
+    color 0.14s ease,
+    opacity 0.14s ease;
+}
+
+.history-row:hover .history-delete,
+.history-row:focus-within .history-delete {
+  opacity: 1;
+}
+
+.history-delete:hover {
+  color: var(--accent-deep);
+}
+
+.empty-history {
+  display: block;
+  padding: 16px 28px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .search-shell {
+    width: min(100% - 24px, 780px);
+    padding: clamp(70px, 14vh, 120px) 0 28px;
+    place-items: start center;
+  }
+
+  .search-card {
+    padding: 0;
+  }
+
+  .intro {
+    margin-top: 34px;
+  }
+
+  h1 {
+    font-size: clamp(2.45rem, 12vw, 3.55rem);
+  }
+
+  .subcopy {
+    margin-bottom: 18px;
+    text-align: left;
+  }
+
+  .search-block {
+    margin-top: 30px;
+  }
+
+  .search-row {
+    height: 58px;
+    padding-left: 20px;
+  }
+
+  .search-row button {
+    width: 42px;
+    height: 42px;
+  }
+
+  .search-row input {
+    font-size: 1.15rem;
+  }
+
+  .quick-panel {
+    padding: 8px 0 12px;
+  }
+
+  .history-query {
+    padding-left: 20px;
+  }
+
+  .history-delete {
+    padding-right: 20px;
+  }
+}

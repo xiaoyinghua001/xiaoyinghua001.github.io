@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>小红书专注搜索</title>
+    <link rel="stylesheet" href="./styles.css?v=20260517-panel-shadow-wrap" />
+  </head>
+  <body>
+    <main class="search-shell">
+      <section class="search-card" aria-labelledby="pageTitle">
+        <div class="hero-group">
+          <div class="brand-row" aria-label="小红书专注搜索">
+            <img class="brand-mark" src="./assets/xiaohongshu-logo.png" alt="小红书" />
+            <span>Focus Search</span>
+          </div>
+
+          <div class="intro">
+            <h1 id="pageTitle">去首页版小红书</h1>
+          </div>
+        </div>
+
+        <div id="searchBlock" class="search-block">
+          <form id="searchForm" class="search-form" autocomplete="off">
+            <label class="visually-hidden" for="keywordInput">搜索关键词</label>
+            <div class="search-row">
+              <input
+                id="keywordInput"
+                name="keyword"
+                type="search"
+                placeholder="搜索小红书"
+                enterkeyhint="search"
+              />
+              <button type="submit" aria-label="搜索">
+                <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m16.5 16.5 4 4" />
+                </svg>
+              </button>
+            </div>
+            <p id="formHint" class="form-hint" aria-live="polite"></p>
+          </form>
+          <p class="subcopy">更专注的搜索体验</p>
+
+          <section class="quick-panel" aria-label="历史记录">
+            <div id="historyList" class="history-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="./script.js?v=20260517-panel-shadow-wrap"></script>
+  </body>
+</html>

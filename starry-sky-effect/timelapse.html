@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>延时视频转换器</title>
+    <link rel="stylesheet" href="./timelapse.css?v=20260517-title-restore" />
+    <script>
+      if (window.location.protocol === "file:") {
+        window.location.replace("http://localhost:4173/timelapse/");
+      }
+    </script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Time-lapse Converter</p>
+          <h1>延时视频转换器</h1>
+        </div>
+      </header>
+
+      <section class="workspace" aria-label="视频转换工作区">
+        <div class="panel upload-panel">
+          <label class="dropzone" id="dropzone">
+            <input id="videoInput" type="file" accept="video/*" />
+            <span class="upload-icon" aria-hidden="true"></span>
+            <span class="drop-title">选择或拖入原视频</span>
+            <span id="fileMeta" class="drop-meta">支持浏览器可播放的视频格式</span>
+          </label>
+
+          <video id="preview" class="preview" controls playsinline></video>
+        </div>
+
+        <form class="panel settings" id="settingsForm">
+          <div class="field">
+            <label for="intervalInput">每隔多少秒截取一帧</label>
+            <input id="intervalInput" type="number" min="0.1" step="0.1" value="5" />
+          </div>
+
+          <div class="field">
+            <label for="qualityInput">导出质量</label>
+            <input id="qualityInput" type="range" min="1" max="12" step="1" value="6" />
+            <div class="range-row">
+              <span>较小</span>
+              <strong id="qualityLabel">6 Mbps</strong>
+              <span>较清晰</span>
+            </div>
+          </div>
+
+          <div class="summary" aria-live="polite">
+            <div>
+              <span>预计抽帧</span>
+              <strong id="frameEstimate">0 帧</strong>
+            </div>
+            <div>
+              <span>预计时长</span>
+              <strong id="durationEstimate">0 秒</strong>
+            </div>
+          </div>
+
+          <button class="primary-button" id="exportButton" type="submit" disabled>
+            <span class="button-progress" id="buttonProgress" aria-hidden="true"></span>
+            <span class="button-label" id="buttonLabel">转换</span>
+          </button>
+
+          <p class="save-location">转换完成后会自动保存到“下载”文件夹</p>
+        </form>
+      </section>
+
+      <section class="progress-panel" aria-live="polite" hidden>
+        <div class="progress-copy">
+          <strong id="statusText">等待选择视频</strong>
+          <span id="statusDetail">上传后即可设置间隔并转换</span>
+        </div>
+        <div class="progress-track" aria-label="保存进度">
+          <span id="progressBar"></span>
+        </div>
+      </section>
+
+      <canvas id="renderCanvas" hidden></canvas>
+    </main>
+
+    <div class="modal-backdrop" id="successModal" hidden>
+      <section class="success-modal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+        <div class="success-mark" aria-hidden="true">✓</div>
+        <h2 id="successTitle">导出成功</h2>
+        <p id="successMessage">MP4 视频已保存。</p>
+        <button class="primary-button" id="closeModalButton" type="button">
+          <span class="button-label">知道了</span>
+        </button>
+      </section>
+    </div>
+
+    <script src="./timelapse.js?v=20260516-restore"></script>
+  </body>
+</html>

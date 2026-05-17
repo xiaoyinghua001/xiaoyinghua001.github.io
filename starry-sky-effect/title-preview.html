@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>标题预览</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background: #ffffff;
+        display: grid;
+        place-items: center;
+        color: #303030;
+      }
+
+      .preview {
+        width: min(100vw, 1600px);
+        aspect-ratio: 16 / 9;
+        display: grid;
+        place-items: center;
+      }
+
+      .lockup {
+        display: grid;
+        gap: 34px;
+        justify-items: center;
+      }
+
+      .small {
+        display: grid;
+        gap: 22px;
+        justify-items: center;
+        font-family: Menlo, Monaco, Consolas, monospace;
+        color: #303030;
+        text-transform: uppercase;
+      }
+
+      .small span:first-child {
+        font-size: clamp(26px, 3.2vw, 54px);
+        font-weight: 700;
+        letter-spacing: 0.62em;
+      }
+
+      .small span:last-child {
+        font-size: clamp(28px, 3.4vw, 58px);
+        font-weight: 700;
+        letter-spacing: 0.34em;
+      }
+
+      .title {
+        position: relative;
+        margin: 0;
+        font-family:
+          "PingFang SC", "Heiti SC", "Microsoft YaHei", "Arial Black", sans-serif;
+        font-size: clamp(84px, 9.8vw, 156px);
+        font-weight: 900;
+        line-height: 0.98;
+        letter-spacing: 0.05em;
+        color: #303030;
+        transform: scaleX(1.08);
+        transform-origin: center;
+      }
+
+      .title::before,
+      .title::after {
+        content: attr(data-text);
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .title::before {
+        z-index: -1;
+        color: rgba(48, 48, 48, 0.72);
+        transform: translate(0.08em, 0.08em);
+      }
+
+      .title::after {
+        color: transparent;
+        background:
+          repeating-linear-gradient(
+            90deg,
+            transparent 0 0.2em,
+            #ffffff 0.2em 0.28em,
+            transparent 0.28em 0.56em
+          ),
+          repeating-linear-gradient(
+            0deg,
+            transparent 0 0.34em,
+            rgba(255, 255, 255, 0.78) 0.34em 0.41em,
+            transparent 0.41em 0.78em
+          );
+        -webkit-background-clip: text;
+        background-clip: text;
+      }
+
+      .cuts {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .cut {
+        position: absolute;
+        height: 0.18em;
+        background: #ffffff;
+      }
+
+      .cut:nth-child(1) {
+        left: 4%;
+        top: 31%;
+        width: 22%;
+      }
+
+      .cut:nth-child(2) {
+        left: 38%;
+        top: 47%;
+        width: 18%;
+      }
+
+      .cut:nth-child(3) {
+        right: 8%;
+        top: 35%;
+        width: 20%;
+      }
+
+      .cut:nth-child(4) {
+        left: 16%;
+        bottom: 14%;
+        width: 12%;
+      }
+
+      .cut:nth-child(5) {
+        right: 18%;
+        bottom: 18%;
+        width: 15%;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="preview">
+      <section class="lockup" aria-label="标题预览">
+        <div class="small">
+          <span>TIME</span>
+          <span>LAPSE CONVERTER</span>
+        </div>
+        <h1 class="title" data-text="延时视频转换器">
+          延时视频转换器
+          <span class="cuts" aria-hidden="true">
+            <span class="cut"></span>
+            <span class="cut"></span>
+            <span class="cut"></span>
+            <span class="cut"></span>
+            <span class="cut"></span>
+          </span>
+        </h1>
+      </section>
+    </main>
+  </body>
+</html>

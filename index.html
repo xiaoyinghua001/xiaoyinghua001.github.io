@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>小工具工作台</title>
+    <link rel="stylesheet" href="./site.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="小工具工作台首页">
+        <span class="brand-mark" aria-hidden="true">T</span>
+        <span>Tools</span>
+      </a>
+      <nav class="nav-links" aria-label="页面导航">
+        <a href="#tools">小工具</a>
+        <a href="#structure">目录</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="pageTitle">
+        <p class="eyebrow">Personal Web Tools</p>
+        <h1 id="pageTitle">小工具工作台</h1>
+        <p class="lead">把零散的小项目放在一个入口里，后续每个工具独立成文件夹，主页只负责清晰跳转。</p>
+      </section>
+
+      <section class="tools-section" id="tools" aria-labelledby="toolsTitle">
+        <div class="section-heading">
+          <p class="eyebrow">Tools</p>
+          <h2 id="toolsTitle">当前工具</h2>
+        </div>
+
+        <div class="tool-grid">
+          <article class="tool-card is-live">
+            <div class="tool-meta">
+              <span class="status">在线</span>
+              <span>搜索辅助</span>
+            </div>
+            <h3>小红书专注搜索</h3>
+            <p>保留搜索框和本地关键词历史，快速跳转到小红书搜索结果页。</p>
+            <a class="tool-link" href="./starry-sky-effect/">打开工具</a>
+          </article>
+
+          <article class="tool-card">
+            <div class="tool-meta">
+              <span class="status muted">本地版</span>
+              <span>视频处理</span>
+            </div>
+            <h3>延时视频转换器</h3>
+            <p>依赖本机 Node 服务和 Swift 编码脚本，适合本地运行；如果要上线，需要改成浏览器端或后端部署版。</p>
+            <a class="tool-link secondary" href="./starry-sky-effect/timelapse.html">查看界面</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="structure-section" id="structure" aria-labelledby="structureTitle">
+        <div class="section-heading">
+          <p class="eyebrow">Structure</p>
+          <h2 id="structureTitle">推荐目录</h2>
+        </div>
+        <pre aria-label="项目目录示例"><code>/index.html
+/site.css
+/starry-sky-effect/
+  index.html
+  styles.css
+  script.js
+/next-tool/
+  index.html
+  styles.css
+  script.js</code></pre>
+      </section>
+    </main>
+  </body>
+</html>

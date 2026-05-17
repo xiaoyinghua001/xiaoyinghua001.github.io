@@ -1,0 +1,5 @@
+com.codex.shuibei-keepawake.plist
+.DS_Store
+node_modules/
+dist/
+*.log
