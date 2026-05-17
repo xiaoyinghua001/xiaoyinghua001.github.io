@@ -33,7 +33,7 @@ const mimeOptions = [
 const outputFormat = mimeOptions.find((option) => MediaRecorder.isTypeSupported(option.mime));
 const context = canvas.getContext("2d", { alpha: false });
 const maxOutputSide = 1920;
-const recorderDurationCompensation = 2;
+const durationTolerance = 0.08;
 
 function formatBytes(bytes) {
   if (!bytes) return "0 MB";
@@ -166,7 +166,35 @@ async function extractFrames({ interval, frames }) {
   return bitmaps;
 }
 
-async function recordFrames({ bitmaps, fps, bitrate }) {
+function measureBlobDuration(blob) {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement("video");
+    const url = URL.createObjectURL(blob);
+    const cleanup = () => {
+      video.removeAttribute("src");
+      video.load();
+      URL.revokeObjectURL(url);
+    };
+
+    video.preload = "metadata";
+    video.onloadedmetadata = () => {
+      const duration = video.duration;
+      cleanup();
+      if (Number.isFinite(duration) && duration > 0) {
+        resolve(duration);
+      } else {
+        reject(new Error("无法读取导出视频时长"));
+      }
+    };
+    video.onerror = () => {
+      cleanup();
+      reject(new Error("无法校验导出视频时长"));
+    };
+    video.src = url;
+  });
+}
+
+async function recordFrames({ bitmaps, fps, bitrate, durationCompensation = 1 }) {
   const stream = canvas.captureStream(0);
   const track = stream.getVideoTracks()[0];
   const chunks = [];
@@ -187,7 +215,7 @@ async function recordFrames({ bitmaps, fps, bitrate }) {
   recorder.start();
 
   try {
-    const frameDuration = 1000 / (fps * recorderDurationCompensation);
+    const frameDuration = 1000 / (fps * durationCompensation);
     let nextFrameAt = performance.now();
 
     for (let index = 0; index < bitmaps.length; index += 1) {
@@ -209,6 +237,28 @@ async function recordFrames({ bitmaps, fps, bitrate }) {
   }
 }
 
+async function recordFramesWithDurationCheck({ bitmaps, fps, bitrate, expectedDuration }) {
+  let durationCompensation = 1;
+  let blob = await recordFrames({ bitmaps, fps, bitrate, durationCompensation });
+  let actualDuration = await measureBlobDuration(blob);
+  let durationRatio = actualDuration / expectedDuration;
+
+  if (Number.isFinite(durationRatio) && Math.abs(durationRatio - 1) > durationTolerance) {
+    durationCompensation *= durationRatio;
+    setStatus(
+      "正在校准时长",
+      `预计 ${formatSeconds(expectedDuration)}，首次生成 ${formatSeconds(actualDuration)}，正在按比例重算`,
+      74,
+    );
+
+    blob = await recordFrames({ bitmaps, fps, bitrate, durationCompensation });
+    actualDuration = await measureBlobDuration(blob);
+    durationRatio = actualDuration / expectedDuration;
+  }
+
+  return { blob, actualDuration, durationRatio };
+}
+
 async function exportTimelapse() {
   if (!sourceFile || exporting || !outputFormat) return;
 
@@ -224,19 +274,29 @@ async function exportTimelapse() {
 
   const { interval, fps, bitrate } = getSettings();
   const frames = estimateFrames();
+  const expectedDuration = frames / fps;
 
   try {
     configureCanvasSize();
-    setStatus("正在准备", `预计导出时长 ${formatSeconds(frames / fps)}`, 1);
+    setStatus("正在准备", `预计导出时长 ${formatSeconds(expectedDuration)}`, 1);
     bitmaps = await extractFrames({ interval, frames });
-    const blob = await recordFrames({ bitmaps, fps, bitrate });
+    const { blob, actualDuration, durationRatio } = await recordFramesWithDurationCheck({
+      bitmaps,
+      fps,
+      bitrate,
+      expectedDuration,
+    });
     outputUrl = URL.createObjectURL(blob);
     const fileName = `${safeBaseName(sourceFile.name)}-延时视频.${outputFormat.extension}`;
+    const durationDetail =
+      Number.isFinite(durationRatio) && Math.abs(durationRatio - 1) > durationTolerance
+        ? `已生成 ${outputFormat.label}，实际约 ${formatSeconds(actualDuration)}`
+        : `已生成 ${outputFormat.label}，点击保存视频下载`;
 
     downloadLink.href = outputUrl;
     downloadLink.download = fileName;
     downloadLink.hidden = false;
-    setStatus("转换完成", `已生成 ${outputFormat.label}，点击保存视频下载`, 100);
+    setStatus("转换完成", durationDetail, 100);
   } catch (error) {
     failed = true;
     exportButton.classList.remove("is-exporting");
