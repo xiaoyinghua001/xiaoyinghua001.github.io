@@ -337,7 +337,7 @@ function handleJobFile(req, res, id) {
 
 async function serveStatic(req, res) {
   const url = new URL(req.url, `http://localhost:${port}`);
-  const pathname = url.pathname === "/timelapse/" || url.pathname === "/timelapse" ? "/timelapse.html" : url.pathname;
+  const pathname = url.pathname === "/" || url.pathname === "/timelapse/" || url.pathname === "/timelapse" ? "/timelapse.html" : url.pathname;
   let filePath = path.join(root, decodeURIComponent(pathname === "/" ? "/index.html" : pathname));
   if (!filePath.startsWith(root)) {
     res.writeHead(403);
