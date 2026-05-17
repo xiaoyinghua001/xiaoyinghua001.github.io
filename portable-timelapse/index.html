@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>通用延时视频转换器</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="studio-shell" aria-label="通用延时视频转换器">
+        <div class="frame-corners" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <nav class="topnav" aria-label="工具信息">
+          <div class="brand">
+            <span>TimeFold</span>
+            <small>Local 1.0</small>
+          </div>
+          <div class="nav-copy">开发者：@学习大王</div>
+        </nav>
+
+        <header class="masthead">
+          <p class="eyebrow">Portable Time-lapse</p>
+          <h1>延时视频转换器</h1>
+          <p class="lead">选择视频，抽取关键帧，在浏览器里生成可分享的延时片段。</p>
+        </header>
+
+        <section class="workspace" aria-label="延时视频转换工作区">
+          <div class="panel media-panel">
+            <label class="dropzone" id="dropzone">
+              <input id="videoInput" type="file" accept="video/*" />
+              <span class="add-mark" aria-hidden="true"></span>
+              <span class="drop-title">选择或拖入原视频</span>
+              <span class="drop-meta" id="fileMeta">视频只在当前浏览器里处理</span>
+            </label>
+
+            <video id="preview" class="preview" controls playsinline></video>
+            <canvas id="canvas" hidden></canvas>
+          </div>
+
+          <form class="panel controls" id="settingsForm">
+            <div class="field">
+              <label for="intervalInput">每隔多少秒截取一帧</label>
+              <input id="intervalInput" type="number" min="0.1" step="0.1" value="5" />
+            </div>
+
+            <div class="field">
+              <label for="fpsInput">导出帧率</label>
+              <input id="fpsInput" type="range" min="8" max="30" step="1" value="24" />
+              <div class="range-row">
+                <span>更小</span>
+                <strong id="fpsLabel">24 fps</strong>
+                <span>更顺</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="qualityInput">画质</label>
+              <input id="qualityInput" type="range" min="1" max="12" step="1" value="6" />
+              <div class="range-row">
+                <span>较小</span>
+                <strong id="qualityLabel">6 Mbps</strong>
+                <span>较清晰</span>
+              </div>
+            </div>
+
+            <div class="summary">
+              <div>
+                <span>预计抽帧</span>
+                <strong id="frameEstimate">0 帧</strong>
+              </div>
+              <div>
+                <span>预计时长</span>
+                <strong id="durationEstimate">0 秒</strong>
+              </div>
+            </div>
+
+            <button class="primary-button" id="exportButton" type="submit" disabled>
+              <span class="button-progress" id="buttonProgress"></span>
+              <span class="button-label" id="buttonLabel">转换</span>
+            </button>
+
+            <a class="download-button" id="downloadLink" hidden>保存视频</a>
+
+            <p class="support-line" id="supportLine"></p>
+          </form>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
