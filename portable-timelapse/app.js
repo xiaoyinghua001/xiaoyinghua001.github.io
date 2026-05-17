@@ -32,6 +32,7 @@ const mimeOptions = [
 
 const outputFormat = mimeOptions.find((option) => MediaRecorder.isTypeSupported(option.mime));
 const context = canvas.getContext("2d", { alpha: false });
+const maxOutputSide = 1920;
 
 function formatBytes(bytes) {
   if (!bytes) return "0 MB";
@@ -54,7 +55,7 @@ function getSettings() {
   return {
     interval: Math.max(0.1, Number(intervalInput.value) || 5),
     fps: Math.max(8, Math.min(30, Number(fpsInput.value) || 24)),
-    bitrate: Math.max(1, Math.min(12, Number(qualityInput.value) || 7)) * 1_000_000,
+    bitrate: Math.max(1, Math.min(12, Number(qualityInput.value) || 6)) * 1_000_000,
   };
 }
 
@@ -132,27 +133,42 @@ function wait(milliseconds) {
   return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 }
 
-async function exportTimelapse() {
-  if (!sourceFile || exporting || !outputFormat) return;
+function configureCanvasSize() {
+  const sourceWidth = preview.videoWidth || 1280;
+  const sourceHeight = preview.videoHeight || 720;
+  const scale = Math.min(1, maxOutputSide / Math.max(sourceWidth, sourceHeight));
+  canvas.width = Math.max(2, Math.round(sourceWidth * scale));
+  canvas.height = Math.max(2, Math.round(sourceHeight * scale));
+}
 
-  exporting = true;
-  let failed = false;
-  resetDownload();
-  exportButton.disabled = true;
-  exportButton.classList.add("is-exporting");
-  exportButton.classList.remove("is-error");
-  buttonLabel.textContent = "转换中";
-  buttonProgress.style.transform = "scaleX(0)";
+async function captureCurrentCanvasFrame() {
+  if (typeof createImageBitmap !== "function") {
+    throw new Error("当前浏览器缺少帧缓存能力，请换 Chrome、Edge 或 Safari 新版本");
+  }
 
-  const { interval, fps, bitrate } = getSettings();
-  const frames = estimateFrames();
-  const chunks = [];
+  return createImageBitmap(canvas);
+}
 
-  canvas.width = preview.videoWidth || 1280;
-  canvas.height = preview.videoHeight || 720;
+async function extractFrames({ interval, frames }) {
+  const bitmaps = [];
 
+  for (let index = 0; index < frames; index += 1) {
+    const sourceTime = Math.min(index * interval, preview.duration || 0);
+    await seekVideo(sourceTime);
+    context.drawImage(preview, 0, 0, canvas.width, canvas.height);
+    bitmaps.push(await captureCurrentCanvasFrame());
+
+    const progress = Math.round(((index + 1) / frames) * 72);
+    setStatus("正在抽取画面", `正在缓存第 ${index + 1} / ${frames} 帧`, progress);
+  }
+
+  return bitmaps;
+}
+
+async function recordFrames({ bitmaps, fps, bitrate }) {
   const stream = canvas.captureStream(0);
   const track = stream.getVideoTracks()[0];
+  const chunks = [];
   const recorder = new MediaRecorder(stream, {
     mimeType: outputFormat.mime,
     videoBitsPerSecond: bitrate,
@@ -167,25 +183,52 @@ async function exportTimelapse() {
     recorder.onerror = () => reject(new Error("浏览器录制失败"));
   });
 
-  try {
-    setStatus("正在准备", `将导出 ${outputFormat.label} 文件`, 1);
-    recorder.start();
+  recorder.start();
 
-    for (let index = 0; index < frames; index += 1) {
-      const sourceTime = Math.min(index * interval, preview.duration || 0);
-      await seekVideo(sourceTime);
-      context.drawImage(preview, 0, 0, canvas.width, canvas.height);
+  try {
+    const frameDuration = 1000 / fps;
+    let nextFrameAt = performance.now();
+
+    for (let index = 0; index < bitmaps.length; index += 1) {
+      context.drawImage(bitmaps[index], 0, 0, canvas.width, canvas.height);
       track.requestFrame();
 
-      const progress = Math.round(((index + 1) / frames) * 100);
-      setStatus("正在生成延时视频", `正在处理第 ${index + 1} / ${frames} 帧`, progress);
-      await wait(1000 / fps);
+      const progress = 72 + Math.round(((index + 1) / bitmaps.length) * 28);
+      setStatus("正在合成视频", `正在写入第 ${index + 1} / ${bitmaps.length} 帧`, progress);
+
+      nextFrameAt += frameDuration;
+      await wait(Math.max(0, nextFrameAt - performance.now()));
     }
 
     recorder.stop();
     await stopped;
+    return new Blob(chunks, { type: outputFormat.mime });
+  } finally {
+    stream.getTracks().forEach((trackItem) => trackItem.stop());
+  }
+}
 
-    const blob = new Blob(chunks, { type: outputFormat.mime });
+async function exportTimelapse() {
+  if (!sourceFile || exporting || !outputFormat) return;
+
+  exporting = true;
+  let failed = false;
+  let bitmaps = [];
+  resetDownload();
+  exportButton.disabled = true;
+  exportButton.classList.add("is-exporting");
+  exportButton.classList.remove("is-error");
+  buttonLabel.textContent = "转换中";
+  buttonProgress.style.transform = "scaleX(0)";
+
+  const { interval, fps, bitrate } = getSettings();
+  const frames = estimateFrames();
+
+  try {
+    configureCanvasSize();
+    setStatus("正在准备", `预计导出时长 ${formatSeconds(frames / fps)}`, 1);
+    bitmaps = await extractFrames({ interval, frames });
+    const blob = await recordFrames({ bitmaps, fps, bitrate });
     outputUrl = URL.createObjectURL(blob);
     const fileName = `${safeBaseName(sourceFile.name)}-延时视频.${outputFormat.extension}`;
 
@@ -200,7 +243,7 @@ async function exportTimelapse() {
     buttonLabel.textContent = "转换失败";
     setStatus("转换失败", error.message || "浏览器无法完成这次转换", 0);
   } finally {
-    stream.getTracks().forEach((trackItem) => trackItem.stop());
+    bitmaps.forEach((bitmap) => bitmap.close?.());
     exporting = false;
     window.setTimeout(() => {
       exportButton.classList.remove("is-exporting", "is-error");
