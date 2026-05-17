@@ -33,6 +33,7 @@ const mimeOptions = [
 const outputFormat = mimeOptions.find((option) => MediaRecorder.isTypeSupported(option.mime));
 const context = canvas.getContext("2d", { alpha: false });
 const maxOutputSide = 1920;
+const recorderDurationCompensation = 2;
 
 function formatBytes(bytes) {
   if (!bytes) return "0 MB";
@@ -186,7 +187,7 @@ async function recordFrames({ bitmaps, fps, bitrate }) {
   recorder.start();
 
   try {
-    const frameDuration = 1000 / fps;
+    const frameDuration = 1000 / (fps * recorderDurationCompensation);
     let nextFrameAt = performance.now();
 
     for (let index = 0; index < bitmaps.length; index += 1) {
