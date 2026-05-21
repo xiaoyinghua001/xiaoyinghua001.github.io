@@ -410,6 +410,6 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(port, () => {
+server.listen(port, "127.0.0.1", () => {
   console.log(`延时视频工具已启动：http://localhost:${port}/`);
 });

@@ -237,64 +237,7 @@ async function recordFrames({ bitmaps, fps, bitrate, durationCompensation = 1 })
   }
 }
 
-async function recordFramesWithTimestamps({ bitmaps, fps, bitrate }) {
-  if (typeof MediaStreamTrackGenerator !== "function" || typeof VideoFrame !== "function") {
-    throw new Error("当前浏览器不支持精确时间戳合成");
-  }
-
-  const generator = new MediaStreamTrackGenerator({ kind: "video" });
-  const writer = generator.writable.getWriter();
-  const stream = new MediaStream([generator]);
-  const chunks = [];
-  const frameDuration = Math.round(1_000_000 / fps);
-  const recorder = new MediaRecorder(stream, {
-    mimeType: outputFormat.mime,
-    videoBitsPerSecond: bitrate,
-  });
-
-  recorder.ondataavailable = (event) => {
-    if (event.data.size) chunks.push(event.data);
-  };
-
-  const stopped = new Promise((resolve, reject) => {
-    recorder.onstop = resolve;
-    recorder.onerror = () => reject(new Error("浏览器录制失败"));
-  });
-
-  recorder.start();
-
-  try {
-    for (let index = 0; index < bitmaps.length; index += 1) {
-      const frame = new VideoFrame(bitmaps[index], {
-        timestamp: index * frameDuration,
-        duration: frameDuration,
-      });
-      await writer.write(frame);
-      frame.close();
-
-      const progress = 72 + Math.round(((index + 1) / bitmaps.length) * 28);
-      setStatus("正在精确合成", `正在写入第 ${index + 1} / ${bitmaps.length} 帧`, progress);
-    }
-
-    await writer.close();
-    recorder.stop();
-    await stopped;
-    return new Blob(chunks, { type: outputFormat.mime });
-  } finally {
-    writer.releaseLock();
-    stream.getTracks().forEach((trackItem) => trackItem.stop());
-  }
-}
-
 async function recordFramesWithDurationCheck({ bitmaps, fps, bitrate, expectedDuration }) {
-  try {
-    const blob = await recordFramesWithTimestamps({ bitmaps, fps, bitrate });
-    const actualDuration = await measureBlobDuration(blob);
-    return { blob, actualDuration, durationRatio: actualDuration / expectedDuration };
-  } catch {
-    setStatus("正在兼容合成", "当前浏览器不支持精确时间戳，改用时长校准", 72);
-  }
-
   let durationCompensation = 1;
   let blob = await recordFrames({ bitmaps, fps, bitrate, durationCompensation });
   let actualDuration = await measureBlobDuration(blob);
