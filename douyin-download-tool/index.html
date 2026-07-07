@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>授权视频备份器</title>
+    <link rel="stylesheet" href="../site.css?v=20260708-douyin-tool" />
+    <style>
+      .tool-detail {
+        display: grid;
+        gap: 18px;
+      }
+
+      .info-panel {
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .info-panel h2 {
+        font-size: 1.3rem;
+      }
+
+      .info-panel p,
+      .info-panel li {
+        color: var(--muted);
+        line-height: 1.75;
+      }
+
+      .info-panel ul {
+        margin: 14px 0 0;
+        padding-left: 1.2rem;
+      }
+
+      .command {
+        margin: 14px 0 0;
+        padding: 16px;
+        overflow: auto;
+        border-radius: 8px;
+        background: #111822;
+        color: #eff5fb;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        line-height: 1.6;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../" aria-label="小工具工作台首页">
+        <span class="brand-mark" aria-hidden="true">T</span>
+        <span>Tools</span>
+      </a>
+      <nav class="nav-links" aria-label="页面导航">
+        <a href="../">首页</a>
+        <a href="./README.md">README</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="pageTitle">
+        <p class="eyebrow">Local Tool</p>
+        <h1 id="pageTitle">授权视频备份器</h1>
+        <p class="lead">本地运行的学习资料备份工具。GitHub Pages 负责说明和入口，下载与合并由本机服务完成。</p>
+        <div class="actions">
+          <a class="tool-link" href="http://127.0.0.1:8765">打开本地服务</a>
+          <a class="tool-link secondary" href="./app.py">查看服务代码</a>
+        </div>
+      </section>
+
+      <section class="tools-section tool-detail" aria-label="使用说明">
+        <article class="info-panel">
+          <h2>启动方式</h2>
+          <p>在本机终端进入这个目录后启动服务：</p>
+          <div class="command">cd douyin-download-tool<br />python3 app.py</div>
+        </article>
+
+        <article class="info-panel">
+          <h2>保存位置</h2>
+          <p>下载和合并后的文件会保存到系统下载文件夹：</p>
+          <div class="command">~/Downloads</div>
+        </article>
+
+        <article class="info-panel">
+          <h2>使用边界</h2>
+          <ul>
+            <li>只保存你自己发布、已获授权、或允许离线备份的内容。</li>
+            <li>不破解平台限制，不保证去水印。</li>
+            <li>抖音媒体链接有时效，403 或置灰时先重新播放视频刷新链接。</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
