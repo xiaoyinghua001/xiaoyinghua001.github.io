@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>延时视频转换器</title>
-    <link rel="stylesheet" href="/timelapse.css?v=20260517-interface-restore" />
+    <link rel="stylesheet" href="/timelapse.css?v=20260801-apple" />
     <script>
       if (window.location.protocol === "file:") {
         window.location.replace("http://localhost:4173/timelapse/");
@@ -15,8 +15,9 @@
     <main class="app-shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Time-lapse Converter</p>
+          <p class="eyebrow">Time-lapse Studio</p>
           <h1>延时视频转换器</h1>
+          <p class="hero-copy">把长视频压缩成干净、可直接播放的 H.264 MP4。</p>
         </div>
       </header>
 
@@ -26,7 +27,7 @@
             <input id="videoInput" type="file" accept="video/*" />
             <span class="upload-icon" aria-hidden="true"></span>
             <span class="drop-title">选择或拖入原视频</span>
-            <span id="fileMeta" class="drop-meta">支持浏览器可播放的视频格式</span>
+            <span id="fileMeta" class="drop-meta">自动保存到下载文件夹</span>
           </label>
 
           <video id="preview" class="preview" controls playsinline></video>
@@ -64,7 +65,7 @@
             <span class="button-label" id="buttonLabel">转换</span>
           </button>
 
-          <p class="save-location">转换完成后会自动保存到“下载”文件夹</p>
+          <p class="save-location" id="saveLocation">转换完成后会自动保存到“下载”文件夹</p>
         </form>
       </section>
 
@@ -92,6 +93,6 @@
       </section>
     </div>
 
-    <script src="/timelapse.js?v=20260517-interface-restore"></script>
+    <script src="/timelapse.js?v=20260801-apple"></script>
   </body>
 </html>

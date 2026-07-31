@@ -53,12 +53,18 @@ function setButtonError() {
 
 function showSuccessModal(outputPath) {
   successMessage.textContent = `MP4 视频已保存到：${outputPath}`;
+  successModal.classList.remove("is-closing");
   successModal.hidden = false;
   closeModalButton.focus();
 }
 
 function hideSuccessModal() {
-  successModal.hidden = true;
+  if (successModal.hidden) return;
+  successModal.classList.add("is-closing");
+  window.setTimeout(() => {
+    successModal.hidden = true;
+    successModal.classList.remove("is-closing");
+  }, 180);
 }
 
 function chineseError(error, fallback = "操作失败") {
